@@ -1,4 +1,5 @@
 ﻿using ETicaretAPI.Application.Repositories;
+using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,24 +12,31 @@ namespace ETicaretAPI.API.Controllers
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+        readonly private IOrderWriteRepository _orderWriteRepository;
+        readonly private IOrderReadRepository _orderReadRepository;
+
+        readonly private ICustomerWriteRepository _customerWriteRepository;
+
+
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IOrderWriteRepository orderWriteRepository, ICustomerWriteRepository customerWriteRepository, IOrderReadRepository orderReadRepository)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
+            _orderWriteRepository = orderWriteRepository;
+            _customerWriteRepository = customerWriteRepository;
+            _orderReadRepository = orderReadRepository;
         }
 
         [HttpGet]
-        public async void Get()
+        public async Task<IActionResult> Get()
         {
-            await _productWriteRepository.AddRangeAsync(new()
-            {
-                new(){Id=Guid.NewGuid(),Stock=2,Name="pro 1",CreatedDate=DateTime.Now,Price=123},
-                new(){Id=Guid.NewGuid(),Stock=32,Name="pro 2",CreatedDate=DateTime.Now,Price=1234},
-                new(){Id=Guid.NewGuid(),Stock=21,Name="pro 3",CreatedDate=DateTime.Now,Price=1233},
-
-            });
-            var count=await _productWriteRepository.SaveAsync();
+         Order order=  await _orderReadRepository.GetByIdAsync("4e1cf8ea-1ff7-4259-badc-d4e985ec4a82");
+            order.Address = "istanbul";
+            await _productWriteRepository.SaveAsync();
+            return Ok(order);
         }
+
+       
 
     }
 }

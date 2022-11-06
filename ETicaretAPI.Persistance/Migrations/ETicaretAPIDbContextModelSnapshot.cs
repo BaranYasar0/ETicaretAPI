@@ -17,9 +17,10 @@ namespace ETicaretAPI.Persistance.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Customer", b =>
                 {
@@ -34,9 +35,12 @@ namespace ETicaretAPI.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Order", b =>
@@ -52,21 +56,21 @@ namespace ETicaretAPI.Persistance.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("CustomerId1")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId1");
+                    b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Product", b =>
@@ -82,15 +86,18 @@ namespace ETicaretAPI.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("Price")
-                        .HasColumnType("bigint");
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
 
                     b.Property<int>("Stock")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("OrderProduct", b =>
@@ -105,14 +112,14 @@ namespace ETicaretAPI.Persistance.Migrations
 
                     b.HasIndex("ProductsId");
 
-                    b.ToTable("OrderProduct", (string)null);
+                    b.ToTable("OrderProduct");
                 });
 
             modelBuilder.Entity("ETicaretAPI.Domain.Entities.Order", b =>
                 {
                     b.HasOne("ETicaretAPI.Domain.Entities.Customer", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId1")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
