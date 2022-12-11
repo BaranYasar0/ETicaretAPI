@@ -24,7 +24,8 @@ namespace ETicaretAPI.Persistance.Contexts
             var datas=ChangeTracker.Entries<BaseEntity>();
             foreach (var data in datas)
             {
-                 _=data.State switch
+            
+                _=data.State switch
                 {
                     EntityState.Added=>data.Entity.CreatedDate=DateTime.UtcNow,
                     EntityState.Modified=>data.Entity.UpdatedDate=DateTime.UtcNow

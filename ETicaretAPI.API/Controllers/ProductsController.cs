@@ -1,7 +1,10 @@
 ﻿using ETicaretAPI.Application.Repositories;
+using ETicaretAPI.Application.ViewModels.Products;
 using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Net;
 
 namespace ETicaretAPI.API.Controllers
 {
@@ -30,13 +33,44 @@ namespace ETicaretAPI.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-         Order order=  await _orderReadRepository.GetByIdAsync("4e1cf8ea-1ff7-4259-badc-d4e985ec4a82");
-            order.Address = "istanbul";
-            await _productWriteRepository.SaveAsync();
-            return Ok(order);
+       
+            return Ok(_productReadRepository.GetAll(false));
         }
 
-       
+        [HttpGet("id")]
+public async Task<IActionResult> Get(string id)
+        {
+            return Ok(await _productReadRepository.GetByIdAsync(id, false));
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Post(VM_Create_Product model)
+        {
+            await _productWriteRepository.AddAsync(new() { Name=model.Name,
+            Price=model.Price,
+            Stock=model.Stock});
+            await _productWriteRepository.SaveAsync();
+            return StatusCode((int)HttpStatusCode.Created);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put(VM_Update_Product model)
+        {
+            Product product= await _productReadRepository.GetByIdAsync(model.Id);
+            product.Stock = model.Stock;
+            product.Name = model.Name;
+            product.Price = model.price;
+            await _productWriteRepository.SaveAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _productWriteRepository.Remove(id);
+            await _productWriteRepository.SaveAsync();
+            return Ok();
+        }
     }
 }
