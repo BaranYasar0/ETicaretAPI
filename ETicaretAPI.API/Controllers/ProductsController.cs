@@ -30,6 +30,7 @@ namespace ETicaretAPI.API.Controllers
             _orderReadRepository = orderReadRepository;
         }
 
+        
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -68,7 +69,7 @@ public async Task<IActionResult> Get(string id)
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
-            await _productWriteRepository.Remove(id);
+            await _productWriteRepository.RemoveAsync(id);
             await _productWriteRepository.SaveAsync();
             return Ok();
         }
