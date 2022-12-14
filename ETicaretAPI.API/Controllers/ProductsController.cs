@@ -47,6 +47,7 @@ public async Task<IActionResult> Get(string id)
         [HttpPost]
         public async Task<IActionResult> Post(VM_Create_Product model)
         {
+            
             await _productWriteRepository.AddAsync(new() { Name=model.Name,
             Price=model.Price,
             Stock=model.Stock});
